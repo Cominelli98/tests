@@ -1,35 +1,19 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.*;
+
 import java.util.ArrayList;
-import it.unibs.ingesw.*;
+
 import org.junit.jupiter.api.Test;
 
-class SimulatoreTest {
+import it.unibs.ingesw.Link;
+import it.unibs.ingesw.Menu_Reti;
+import it.unibs.ingesw.Network;
 
-	@Before
-	public void setUp() {
-		Network net1 = new Network("Net");
-		net1.addTransition("tran");
-		net1.addLocation("loc1");
-		net1.addLocation("loc2");
-		Link l1 = new Link(net1.getLocation(0).getId(), net1.getLastTransition().getId(), net1.getId(), 1);
-		Link l2 = new Link(net1.getLastTransition().getId(), net1.getLocation(1).getId(), net1.getId(), 1);
-		net1.addLink(l1);
-		net1.addLink(l2);
-		
-		Petri_network pnet = new Petri_network(net1, "PNet");
-	}
-	
-	@After
-	public void tearDown() {
-		
-	}
-	
+class ProvaTest {
+
 	@Test
-	public void AttivabileTest() {
-	
+	public void testNetwork() {
 //		ArrayList<Network> netList = new ArrayList<Network>();
 //		Menu_Reti.createNetwork(netList);
 		Network net1 = new Network("Paganel");
@@ -59,6 +43,13 @@ class SimulatoreTest {
 				() -> assertEquals(l10.getDestination(), l11.getOrigin())
 				);
 //		
+	}
+	
+	@Test
+	public void testNetwork1() {
+		ArrayList<Network> netList = new ArrayList<Network>();
+		Menu_Reti.createNetwork(netList);
+		assert(true);
 		
 	}
 
