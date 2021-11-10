@@ -18,6 +18,7 @@ class UtilityTest {
 		var min = Utility.readInt();
 		System.out.println("inserisci il max: ");
 		var max = Utility.readInt();
+		System.out.println("inserisci il numero di test: ");
 		assertTrue(Utility.readLimitedInt(min, max) <= max 
 					|| Utility.readLimitedInt(min, max) >= min);
 	}
@@ -43,7 +44,6 @@ class UtilityTest {
 	@Test
 	void nameCheckTest() {
 		
-		System.out.println("Test nameCheck");
 		String toTest = "Banana Split";
 		Network net1 = new Network("Banana Split");
 		net1.addLocation("loc1-0");
@@ -56,7 +56,6 @@ class UtilityTest {
 	
 	@Test
 	void getMaxTest() {
-		
 		
 		Integer[] c = {1, 5, 10, 50, 20, 30, 98, 100, 2, 30};
 		ArrayList<Integer> ali = new ArrayList<>();
