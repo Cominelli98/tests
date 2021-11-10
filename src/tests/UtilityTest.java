@@ -19,6 +19,7 @@ class UtilityTest {
 		System.out.println("inserisci il max: ");
 		var max = Utility.readInt();
 		System.out.println("inserisci il numero di test: ");
+		
 		assertTrue(Utility.readLimitedInt(min, max) <= max 
 					|| Utility.readLimitedInt(min, max) >= min);
 	}
@@ -29,6 +30,7 @@ class UtilityTest {
 		System.out.println("Test lettura interi limitati inf");
 		System.out.println("inserisci il min: ");
 		var min = Utility.readInt();
+		
 		assertTrue(Utility.readLowLimitInt(min) >= min);
 	}
 	
@@ -38,6 +40,7 @@ class UtilityTest {
 		System.out.println("Test lettura Stringhe");
 		var s = "hello";
 		System.out.println("say hello: ");
+		
 		assertTrue(Utility.readString().equals(s));
 	}
 	
@@ -48,10 +51,11 @@ class UtilityTest {
 		Network net1 = new Network("Banana Split");
 		net1.addLocation("loc1-0");
 		net1.addTransition("tran1");
-		
-		assertTrue(Utility.nameCheck(net1, toTest));
-		assertFalse(Utility.nameCheck(net1.getLastLocation(), toTest));
-		assertFalse(Utility.nameCheck(net1.getLastTransition(), toTest));
+		assertAll(
+			() -> assertTrue(Utility.nameCheck(net1, toTest)),
+			() -> assertFalse(Utility.nameCheck(net1.getLastLocation(), toTest)),
+			() -> assertFalse(Utility.nameCheck(net1.getLastTransition(), toTest))
+		);
 	}
 	
 	@Test
@@ -62,9 +66,10 @@ class UtilityTest {
 		for (int i = 0; i < c.length; i++) {
 			ali.add(c[i]);
 		}
-		
-		assertEquals(Utility.getMax(ali), 100);
-		assertNotEquals(Utility.getMax(ali), 1);
+		assertAll(
+			() -> assertEquals(Utility.getMax(ali), 100),
+			() -> assertNotEquals(Utility.getMax(ali), 1)
+		);
 	}
 
 }
