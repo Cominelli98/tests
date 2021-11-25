@@ -1,88 +1,97 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import org.junit.jupiter.api.Test;
-
-import com.google.gson.Gson;
-
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import it.unibs.ingesw.Network;
-import it.unibs.ingesw.Petri_network;
-import it.unibs.ingesw.Priority_network;
-import it.unibs.ingesw.ioGson.ReadN;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ReadNTest {
+import it.unibs.ingesw.*;
+import it.unibs.ingesw.ioGson.*;
 
+import static org.junit.Assert.*;
 
-	    /* This folder and the files created in it will be deleted after
-	     * tests are run, even in the event of failures or exceptions.
-	     */
-	    @Rule
-	    public TemporaryFolder folder = new TemporaryFolder();
-	    File file1, file2, file3;
+import java.io.*;
 
-	    /* executed before every test: create temporary files */
-	    @Before
-	    public void setUp() {
-	    	 
-	        try {
-	            file1 = folder.newFile("testfile1.txt");
-	            file2 = folder.newFile("testfile2.txt");
-	            file3 = folder.newFile("testfile3.txt");
-	        }
-	        catch( IOException ioe ) {
-	            System.err.println( 
-	                "error creating temporary test file in " +
-	                this.getClass().getSimpleName() );
-	        }
-	    }
+public class ReadNTest {
 
-	    /**
-	     *  Write to the two temporary files and run some asserts.
-	     */
-	    @Test
-	    public void test2TempFiles() {
+    File file;
 
-	    	System.out.println(file1.getPath());
-	    	
-	    	String bodyTXT1 = new String("{\"locations\":[{\"netId\":2,\"nodeId\":10000,\"name\":\"s\"}],\"transitions\":[{\"netId\":2,\"nodeId\":0,\"nodeName\":\"d\"}],\"netLinks\":[{\"IDNode1\":10000,\"IDNode2\":0,\"netId\":2,\"orientation\":1}],\"netId\":2,\"name\":\"a\",\"OFFSET\":10000}\r\n");
-	    	String bodyTXT2 = new String("{\"petriLocations\":[{\"token\":54,\"netId\":2,\"nodeId\":10000,\"nodeName\":\"s\"}],\"petriTransitions\":[{\"cost\":23,\"priority\":-1,\"netId\":2,\"nodeId\":0,\"nodeName\":\"d\"}],\"petriNetLinks\":[{\"IDNode1\":10000,\"IDNode2\":0,\"netId\":2,\"orientation\":1}],\"petriNetId\":2,\"fatherNetId\":2,\"name\":\"PACIOLLO\"}\r\n");
-	    	String bodyTXT3 = new String("{\"priority_NetID\":1,\"petriLocations\":[{\"token\":54,\"netId\":2,\"nodeId\":10000,\"nodeName\":\"s\"}],\"petriTransitions\":[{\"cost\":23,\"priority\":23,\"netId\":2,\"nodeId\":0,\"nodeName\":\"d\"}],\"petriNetLinks\":[{\"IDNode1\":10000,\"IDNode2\":0,\"netId\":2,\"orientation\":1}],\"petriNetId\":2,\"fatherNetId\":2,\"name\":\"gfer\"}\r\n");
-	    	
-	    	
-	    	//write out data to the test files
-	        try {
-				FileWriter fw1 = new FileWriter( file1 );
-				BufferedWriter bw1 = new BufferedWriter( fw1 );
-				bw1.write(bodyTXT1);
+    /*
+     *  This folder and the files created in it will be deleted after
+     * tests are run, even in the event of failures or exceptions.
+     */
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
+    @Before
+    public void setUp() {
+        try {
+            file = folder.newFile( "testfile.txt" );
+        }
+        catch( IOException ioe ) {
+            System.err.println( 
+                "error creating temporary test file in " +
+                this.getClass().getSimpleName() );
+        }
+    }
+
+    /**
+     * Scrittura su file , lettura ReadN e testing riempimento oggetti
+     * @throws IOException 
+     * @throws FileNotFoundException 
+     */
+    @Test
+    public void testReadingReadN() throws FileNotFoundException, IOException {
+
+    	
+    	String bodyTXT1 = new String("{\"locations\":[{\"netId\":2,\"nodeId\":10000,\"name\":\"s\"}],\"transitions\":[{\"netId\":2,\"nodeId\":0,\"nodeName\":\"d\"}],\"netLinks\":[{\"IDNode1\":10000,\"IDNode2\":0,\"netId\":2,\"orientation\":1}],\"netId\":2,\"name\":\"a\",\"OFFSET\":10000}\r\n");
+    
+        //write out data to the test files
+        try {
+				FileWriter fw1 = new FileWriter(file);
+				BufferedWriter bw1 = new BufferedWriter(fw1);
+				bw1.write( bodyTXT1);
 				bw1.close();
-			
-				FileWriter fw2 = new FileWriter( file2 );
-				BufferedWriter bw2 = new BufferedWriter( fw2 );
-				bw2.write(bodyTXT2);
-				bw2.close();
-				
-				FileWriter fw3 = new FileWriter( file3 );
-				BufferedWriter bw3 = new BufferedWriter( fw3 );
-				bw3.write(bodyTXT3);
-				bw3.close();
-	        }
-	        catch( IOException ioe ) {
-	            System.err.println( 
-	                "error creating temporary test file in " +
-	                this.getClass().getSimpleName() );
-	        }
-	       System.out.println(file1.getPath());
-	       assertTrue(true);
-	        
-	    }
-
+        }
+        catch(IOException ioe) {
+            System.err.println( 
+                "error creating temporary test file in " +
+                this.getClass().getSimpleName());
+        }
+        
+        Network net = (Network) ReadN.loadFromSource(Network.class, file.getPath());
+        assertTrue(net.getId() == 2);
+        assertTrue(net.getName()!= null);
+        for (Location l : net.getLocations()) {
+        	assertAll(
+        			() -> assertTrue("Nome location null", l.getName() != null),
+        			() -> assertTrue("NetID diverso dal padre", l.getNetID() == 2),
+        			() -> assertTrue("ID nodo non accettabile", l.getId() >= 0)
+        			);
+		}
+        for (Transition t : net.getTransitions()) {
+        	assertAll(
+        			() -> assertTrue("Nome Transition null", t.getName() != null),
+        			() -> assertTrue("NetID diverso dal padre", t.getNetID() == 2),
+        			() -> assertTrue("ID nodo non accettabile", t.getId() >= 0)
+        			);
+		}
+        for (Link link : net.getLinks()) {
+        	assertAll(
+        			() -> assertTrue("Origine e destinazione non conformi", link.getOrigin() >= 0 && link.getDestination() >=0),
+        			() -> assertTrue("Orientamento non conforme", link.getOrientation() == 1 || link.getOrientation() == -1)
+        			);
+		}
+    }
+    
+    @Test
+    public void throwsTest() {
+    	
+    	assertThrows(FileNotFoundException.class, () -> ReadN.loadFromSource(Network.class, ""));
+    	assertThrows(IOException.class, () -> ReadN.loadFromSource(Network.class, ""));
+    	assertThrows(IllegalArgumentException.class,() -> ReadN.readFile(Petri_transition.class));
+    }
 }
