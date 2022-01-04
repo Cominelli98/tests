@@ -53,7 +53,7 @@ public class ReadNTest {
         try {
 				FileWriter fw1 = new FileWriter(file);
 				BufferedWriter bw1 = new BufferedWriter(fw1);
-				bw1.write( bodyTXT1);
+				bw1.write(bodyTXT1);
 				bw1.close();
         }
         catch(IOException ioe) {

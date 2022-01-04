@@ -41,7 +41,9 @@ class AttivabileTest {
 		pnet = new Petri_network(net, "PNet");
 		simulatore = new Simulatore(pnet);
 	}
-	
+	/**
+	 * Test che controlla se il primo if presente nel metodo è esatto 
+	 */
 	@Test
 	public void checkFirstConditionTest() {
 		
@@ -49,11 +51,14 @@ class AttivabileTest {
 		assertFalse("La transizione non è destinazione di nessun link", simulatore.AttivabilitaTest(pnet.getTransition(2)));
 	}
 	
+	/**
+	 * Test che controlla all'interno del ciclo for, ispezionando le if condition interne
+	 */
 	@Test
 	public void checkIfForWorkRightTest() {
 		
 		//Cammino indipendente: 1-2-4-5-6-7-8-3
-		assertFalse("Errore ciclo for", simulatore.AttivabilitaTest(pnet.getTransition(0)));
+		assertFalse("Errore ciclo for -if annidato-", simulatore.AttivabilitaTest(pnet.getTransition(0)));
 		
 		//Cammino indipendente: 1-2-4-5-6-7-8-9-..., 1-2-4-5-6-9-...
 		pnet.addLocationToken(pnet.getLocationID(1), 2);
