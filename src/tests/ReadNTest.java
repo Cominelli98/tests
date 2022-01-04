@@ -63,19 +63,17 @@ public class ReadNTest {
         }
         
         Network net = (Network) ReadN.loadFromSource(Network.class, file.getPath());
-        assertTrue(net.getId() == 2);
-        assertTrue(net.getName()!= null);
         for (Location l : net.getLocations()) {
         	assertAll(
         			() -> assertTrue("Nome location null", l.getName() != null),
-        			() -> assertTrue("NetID diverso dal padre", l.getNetID() == 2),
+        			() -> assertTrue("NetID diverso dal padre", l.getNetID() == net.getId()),
         			() -> assertTrue("ID nodo non accettabile", l.getId() >= 0)
         			);
 		}
         for (Transition t : net.getTransitions()) {
         	assertAll(
         			() -> assertTrue("Nome Transition null", t.getName() != null),
-        			() -> assertTrue("NetID diverso dal padre", t.getNetID() == 2),
+        			() -> assertTrue("NetID diverso dal padre", t.getNetID() == net.getId()),
         			() -> assertTrue("ID nodo non accettabile", t.getId() >= 0)
         			);
 		}
